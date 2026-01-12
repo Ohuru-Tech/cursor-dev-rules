@@ -186,8 +186,4 @@ If you encounter any issues or have questions, please open an issue on the GitHu
 
 ## Changelog
 
-### 0.1.0
-
-- Initial release
-- Support for Django, FastAPI, and Next.js rules
-- CLI tool for fetching and installing rules
+See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes.
