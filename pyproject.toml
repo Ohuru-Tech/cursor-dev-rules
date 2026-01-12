@@ -1,6 +1,6 @@
 [project]
 name = "cursor-dev-rules"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI tool to fetch and install Cursor dev rules into your project"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -47,9 +47,6 @@ build-backend = "hatchling.build"
 
 [tool.hatchling.build.targets.wheel]
 packages = ["cursor_dev_rules"]
-
-[tool.hatchling.build.targets.wheel.shared-data]
-"cursor_dev_rules/rules" = "rules"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -139,15 +139,15 @@ pytest --cov=cursor_dev_rules --cov-report=html
 cursor-dev-rules/
 ├── cursor_dev_rules/
 │   ├── __init__.py
-│   └── cli.py              # Main CLI implementation
-├── rules/                  # Bundled rules
-│   ├── backend/
-│   │   ├── django/
-│   │   ├── fastapi/
-│   │   └── general/
-│   └── frontend/
-│       ├── nextjs/
-│       └── general/
+│   ├── cli.py              # Main CLI implementation
+│   └── rules/              # Bundled rules
+│       ├── backend/
+│       │   ├── django/
+│       │   ├── fastapi/
+│       │   └── general/
+│       └── frontend/
+│           ├── nextjs/
+│           └── general/
 ├── tests/                  # Test suite
 │   ├── test_cli.py
 │   ├── test_utils.py
@@ -160,7 +160,7 @@ cursor-dev-rules/
 
 Contributions are welcome! Please feel free to submit a Pull Request. Here are some ways you can contribute:
 
-1. **Add new framework rules** - Create new rule files in the `rules/` directory
+1. **Add new framework rules** - Create new rule files in the `cursor_dev_rules/rules/` directory
 2. **Improve existing rules** - Update and enhance current rule files
 3. **Bug fixes** - Report and fix bugs
 4. **Documentation** - Improve documentation and examples
@@ -168,7 +168,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. Here are s
 
 ### Adding New Rules
 
-1. Create a new directory under `rules/<category>/<framework>/`
+1. Create a new directory under `cursor_dev_rules/rules/<category>/<framework>/`
 2. Add a `RULE.md` file with your rules
 3. Update this README to include the new framework
 4. Add tests for the new rule path

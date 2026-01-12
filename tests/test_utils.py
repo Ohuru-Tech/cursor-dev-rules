@@ -46,42 +46,46 @@ class TestGetRulesPath:
         # Create a rules directory in a temporary project structure
         project_root = temp_dir / "project"
         project_root.mkdir()
-        rules_dir = project_root / "rules"
+        package_dir = project_root / "cursor_dev_rules"
+        package_dir.mkdir()
+        rules_dir = package_dir / "rules"
         rules_dir.mkdir()
 
-        # Mock Path(__file__).parent.parent to return our temp project root
-        with patch("cursor_dev_rules.cli.Path") as mock_path_class:
-            mock_file_path = MagicMock()
-            mock_file_path.parent.parent = project_root
-            mock_path_class.return_value = mock_file_path
+        # Patch __file__ to point to our test structure
+        import cursor_dev_rules.cli
 
+        original_file = cursor_dev_rules.cli.__file__
+        cursor_dev_rules.cli.__file__ = str(package_dir / "cli.py")
+
+        try:
             result = get_rules_path()
-
             assert isinstance(result, Path)
             assert result == rules_dir
+        finally:
+            cursor_dev_rules.cli.__file__ = original_file
 
     @patch("importlib.resources.files")
     def test_get_rules_path_not_a_directory(self, mock_files):
         """Test get_rules_path() when rules is not a directory."""
         mock_package = MagicMock()
         mock_rules = MagicMock()
-        mock_rules.is_dir.return_value = False
+        # Check both is_dir() methods
+        if hasattr(mock_rules, "is_dir"):
+            mock_rules.is_dir.return_value = False
+        # Also check if it's a Path instance
+        if isinstance(mock_rules, Path):
+            mock_rules.exists.return_value = False
+            mock_rules.is_dir.return_value = False
 
         mock_package.__truediv__ = lambda x: mock_rules if x == "rules" else MagicMock()
         mock_files.return_value = mock_package
 
-        # Should fall back to development mode
-        with patch("cursor_dev_rules.cli.Path") as mock_path_class:
-            project_root = Path(__file__).parent.parent
-            mock_file_path = MagicMock()
-            mock_file_path.parent.parent = project_root
-            mock_path_class.return_value = mock_file_path
+        # Should fall back to development mode (package directory first, then project root)
+        result = get_rules_path()
 
-            result = get_rules_path()
-
-            # Should return the development rules path
-            assert isinstance(result, Path)
-            assert result.exists()
+        # Should return the development rules path
+        assert isinstance(result, Path)
+        assert result.exists()
 
     @patch("importlib.resources.files")
     def test_get_rules_path_file_not_found(self, mock_files, temp_dir):
@@ -92,16 +96,23 @@ class TestGetRulesPath:
         # Create a project structure without rules directory
         project_root = temp_dir / "project"
         project_root.mkdir()
+        package_dir = project_root / "cursor_dev_rules"
+        package_dir.mkdir()
+        # Don't create rules directory
 
-        with patch("cursor_dev_rules.cli.Path") as mock_path_class:
-            mock_file_path = MagicMock()
-            mock_file_path.parent.parent = project_root
-            mock_path_class.return_value = mock_file_path
+        # Patch __file__ to point to our test structure (without rules)
+        import cursor_dev_rules.cli
 
+        original_file = cursor_dev_rules.cli.__file__
+        cursor_dev_rules.cli.__file__ = str(package_dir / "cli.py")
+
+        try:
             with pytest.raises(
                 FileNotFoundError, match="Could not find rules directory"
             ):
                 get_rules_path()
+        finally:
+            cursor_dev_rules.cli.__file__ = original_file
 
     @patch("importlib.resources.files")
     def test_get_rules_path_attribute_error(self, mock_files, temp_dir):
