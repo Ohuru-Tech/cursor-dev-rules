@@ -40,11 +40,8 @@ jobs:
         needs:
             - build
         runs-on: ubuntu-latest
-        environment:
-            name: pypi
-            url: https://pypi.org/p/cursor-dev-rules
         permissions:
-            id-token: write # IMPORTANT: mandatory for trusted publishing
+            contents: read
 
         steps:
             - name: Download all the dists
@@ -55,3 +52,5 @@ jobs:
 
             - name: Publish distribution 📦 to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  password: ${{ secrets.PYPI_API_TOKEN }}
