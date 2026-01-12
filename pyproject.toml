@@ -67,3 +67,9 @@ markers = [
     "unit: Unit tests",
     "integration: Integration tests",
 ]
+
+[dependency-groups]
+dev = [
+    "build>=1.4.0",
+    "twine>=6.2.0",
+]
